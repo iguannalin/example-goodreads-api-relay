@@ -6,13 +6,13 @@ const convert = require("xml-js");
 const rateLimit = require("express-rate-limit");
 var cors = require("cors");
 const app = express();
-const port = 3000;
+// const port = 3000;
 
 // Rate limiting - Goodreads limits to 1/sec, so we should too
 
 // Enable if you're behind a reverse proxy (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
-// app.set('trust proxy', 1);
+app.set('trust proxy', 1);
 
 const limiter = rateLimit({
   windowMs: 1000, // 1 second
@@ -32,11 +32,15 @@ app.use(cors());
 app.get("/", (req, res) => res.send("Hello World!"));
 
 // Our Goodreads relay route!
-app.get("/api/list", async (req, res) => {
+app.get("/api/search", async (req, res) => {
   try {
+    // This uses string interpolation to make our search query string
+    // it pulls the posted query param and reformats it for goodreads
+    const searchString = `q=${req.query.q}`;
+
     // It uses node-fetch to call the goodreads api, and reads the key from .env
     const response = await fetch(
-        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all`,
+      `https://www.goodreads.com/search/index.xml?key=${process.env.GOODREADS_API_KEY}&${searchString}`,
     );
     //more info here https://www.goodreads.com/api/index#search.books
     const xml = await response.text();
@@ -47,7 +51,7 @@ app.get("/api/list", async (req, res) => {
 
     // The API returns stuff we don't care about, so we may as well strip out
     // everything except the results:
-    const results = JSON.parse(json).GoodreadsResponse;
+    const results = JSON.parse(json).GoodreadsResponse.search.results;
 
     return res.json({
       success: true,
