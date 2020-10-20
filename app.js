@@ -32,15 +32,11 @@ app.use(cors());
 app.get("/", (req, res) => res.send("Hello World!"));
 
 // Our Goodreads relay route!
-app.get("/api/search", async (req, res) => {
+app.get("/api/list", async (req, res) => {
   try {
-    // This uses string interpolation to make our search query string
-    // it pulls the posted query param and reformats it for goodreads
-    const searchString = `q=${req.query.q}`;
-
     // It uses node-fetch to call the goodreads api, and reads the key from .env
     const response = await fetch(
-      `https://www.goodreads.com/search/index.xml?key=${process.env.GOODREADS_API_KEY}&${searchString}`,
+        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all`,
     );
     //more info here https://www.goodreads.com/api/index#search.books
     const xml = await response.text();
@@ -51,7 +47,7 @@ app.get("/api/search", async (req, res) => {
 
     // The API returns stuff we don't care about, so we may as well strip out
     // everything except the results:
-    const results = JSON.parse(json).GoodreadsResponse.search.results;
+    const results = JSON.parse(json).GoodreadsResponse;
 
     return res.json({
       success: true,
