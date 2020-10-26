@@ -33,7 +33,6 @@ app.get("/", (req, res) => res.send("Hello World!"));
 
 // Our Goodreads relay route!
 app.get("/api/list", async (req, res) => {
-  for (let i = 1; i < 4; i++) {
   try {
     // It uses node-fetch to call the goodreads api, and reads the key from .env
     const response = await fetch(
@@ -59,7 +58,6 @@ app.get("/api/list", async (req, res) => {
       success: false,
       message: err.message,
     });
-  }
   }
 });
 
