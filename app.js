@@ -33,10 +33,11 @@ app.get("/", (req, res) => res.send("Hello World!"));
 
 // Our Goodreads relay route!
 app.get("/api/list", async (req, res) => {
+  for (let i = 1; i < 4; i++) {
   try {
     // It uses node-fetch to call the goodreads api, and reads the key from .env
     const response = await fetch(
-        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all`,
+        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all&page=${i}`,
     );
     //more info here https://www.goodreads.com/api/index#search.books
     const xml = await response.text();
@@ -58,6 +59,7 @@ app.get("/api/list", async (req, res) => {
       success: false,
       message: err.message,
     });
+  }
   }
 });
 
