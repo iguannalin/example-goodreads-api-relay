@@ -36,7 +36,7 @@ app.get("/api/list", async (req, res) => {
   try {
     // It uses node-fetch to call the goodreads api, and reads the key from .env
     const response = await fetch(
-        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all&page=${i}`,
+        `https://www.goodreads.com/review/list/113012614.xml?key=${process.env.GOODREADS_API_KEY}&v=2&shelf=all`,
     );
     //more info here https://www.goodreads.com/api/index#search.books
     const xml = await response.text();
